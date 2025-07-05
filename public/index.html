@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高校设备管理系统</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --info-color: #3b82f6;
+            --light-color: #f8fafc;
+            --dark-color: #1e293b;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --box-shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--gray-800);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* 动画关键帧 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* 页面容器 */
+        .page-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 头部导航 */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--box-shadow);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray-600);
+        }
+
+        .user-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* 主要内容区域 */
+        .main-container {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+        }
+
+        /* 登录表单 */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius-lg);
+            padding: 3rem;
+            box-shadow: var(--box-shadow-lg);
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            color: var(--gray-600);
+            font-size: 0.95rem;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-input:hover {
+            border-color: var(--gray-400);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-400);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* 标签页 */
+        .tabs {
+            display: flex;
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 0.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            border-radius: calc(var(--border-radius) - 0.25rem);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            color: var(--gray-600);
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: var(--box-shadow);
+        }
+
+        /* 仪表板网格 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--box-shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .card-icon.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        }
+
+        .card-icon.success {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+        }
+
+        .card-icon.warning {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+        }
+
+        .card-icon.danger {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+        }
+
+        .card-icon.info {
+            background: linear-gradient(135deg, var(--info-color), #2563eb);
+        }
+
+        /* 统计卡片 */
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .table th {
+            background: var(--gray-50);
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+        }
+
+        .table tr:hover {
+            background: var(--gray-50);
+        }
+
+        /* 状态徽章 */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.running {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge.maintenance {
+            background: #fef2f2;
+            color: #991b1b;
+        }
+
+        .badge.cleaning {
+            background: #fefce8;
+            color: #a16207;
+        }
+
+        .badge.archived {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        /* 搜索栏 */
+        .search-container {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--border-radius-lg);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 1.1rem;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: var(--box-shadow-lg);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        /* 操作按钮组 */
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-lg);
+            z-index: 1100;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .notification.success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .notification.error {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .notification.warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .notification.info {
+            background: var(--info-color);
+            color: white;
+        }
+
+        /* 加载动画 */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 2px solid white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 隐藏类 */
+        .hidden {
+            display: none !important;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .auth-card {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-400);
+        }
+
+        /* 模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: var(--gray-800);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--gray-700);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* 警告样式 */
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid transparent;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeaa7;
+        }
+
+        .alert-info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <!-- 头部导航 -->
+        <header class="header hidden" id="header">
+            <div class="nav-container">
+                <a href="#" class="logo">
+                    <i class="fas fa-cogs"></i>
+                    <span>设备管理系统</span>
+                </a>
+                <div class="user-info">
+                    <div class="user-badge" id="userRole">管理员</div>
+                    <span id="username">用户名</span>
+                    <span>|</span>
+                    <span>最后登录: <span id="lastLogin">刚刚</span></span>
+                    <button class="btn btn-secondary" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        退出登录
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 登录/注册页面 -->
+        <div class="auth-container" id="authContainer">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <div class="logo" style="justify-content: center; margin-bottom: 1rem;">
+                        <i class="fas fa-cogs"></i>
+                        <span>设备管理系统</span>
+                    </div>
+                    <h1 class="auth-title">欢迎回来</h1>
+                    <p class="auth-subtitle">请登录您的账户以继续</p>
+                </div>
+
+                <!-- 标签页 -->
+                <div class="tabs">
+                    <div class="tab active" id="showLogin" onclick="showLoginForm()">
+                        <i class="fas fa-sign-in-alt"></i>
+                        登录
+                    </div>
+                    <div class="tab" id="showRegister" onclick="showRegisterForm()">
+                        <i class="fas fa-user-plus"></i>
+                        注册
+                    </div>
+                </div>
+
+                <!-- 登录表单 -->
+                <form id="loginForm">
+                    <div id="loginAlert"></div>
+                    <div class="form-group">
+                        <label class="form-label">用户名</label>
+                        <input type="text" class="form-input" id="loginUsername" name="username" placeholder="请输入用户名"
+                            autocomplete="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">密码</label>
+                        <input type="password" class="form-input" id="loginPassword" name="password" placeholder="请输入密码"
+                            autocomplete="current-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-sign-in-alt"></i>
+                        立即登录
+                    </button>
+                </form>
+
+                <!-- 注册表单 -->
+                <form id="registerForm" class="hidden">
+                    <div id="registerAlert"></div>
+                    <div class="form-group">
+                        <label class="form-label">用户名</label>
+                        <input type="text" class="form-input" id="registerUsername" name="username" placeholder="请输入用户名"
+                            autocomplete="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">真实姓名</label>
+                        <input type="text" class="form-input" id="registerName" name="name" placeholder="请输入真实姓名"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">邮箱（选填）</label>
+                        <input type="email" class="form-input" id="registerEmail" name="email" placeholder="请输入邮箱">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">手机号（选填）</label>
+                        <input type="tel" class="form-input" id="registerPhone" name="phone" placeholder="请输入手机号"
+                            autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">密码</label>
+                        <input type="password" class="form-input" id="registerPassword" name="password"
+                            placeholder="请输入密码" autocomplete="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">确认密码</label>
+                        <input type="password" class="form-input" name="confirmPassword" placeholder="请再次输入密码"
+                            autocomplete="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">角色</label>
+                        <select class="form-input" id="registerRole" name="role" required>
+                            <option value="">请选择角色</option>
+                            <option value="student">学生</option>
+                            <option value="teacher">教师</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-user-plus"></i>
+                        立即注册
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 主应用界面 -->
+        <main class="main-container hidden" id="mainContainer">
+            <!-- 仪表板 -->
+            <div id="dashboard" class="page-section">
+                <div class="dashboard-grid">
+                    <!-- 统计卡片 -->
+                    <div class="card stat-card">
+                        <div class="card-icon primary">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                        <div class="stat-number" id="totalEquipment">0</div>
+                        <div class="stat-label">设备总数</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-number" id="runningEquipment">0</div>
+                        <div class="stat-label">正常运行</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-icon warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-number" id="maintenanceEquipment">0</div>
+                        <div class="stat-label">维护中</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="card-icon info">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="stat-number" id="todayReservations">0</div>
+                        <div class="stat-label">今日预约</div>
+                    </div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon primary">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            快速操作
+                        </h2>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <button class="btn btn-primary" onclick="showSection('equipment')">
+                            <i class="fas fa-laptop"></i>
+                            设备管理
+                        </button>
+                        <button class="btn btn-success" onclick="showSection('reservation')">
+                            <i class="fas fa-calendar-plus"></i>
+                            设备预约
+                        </button>
+                        <button class="btn btn-warning" onclick="showSection('maintenance')">
+                            <i class="fas fa-tools"></i>
+                            故障报修
+                        </button>
+                        <button class="btn btn-info" onclick="showSection('statistics')">
+                            <i class="fas fa-chart-bar"></i>
+                            数据统计
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 最近活动 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon info">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            最近活动
+                        </h2>
+                    </div>
+                    <div id="recentActivities">
+                        <p style="text-align: center; color: var(--gray-500); padding: 2rem;">暂无活动记录</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备管理 -->
+            <div id="equipment" class="page-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon primary">
+                                <i class="fas fa-laptop"></i>
+                            </div>
+                            设备管理
+                        </h2>
+                        <button class="btn btn-primary" onclick="showAddEquipmentModal()" id="addEquipmentBtn">
+                            <i class="fas fa-plus"></i>
+                            添加设备
+                        </button>
+                    </div>
+
+                    <!-- 搜索栏 -->
+                    <div class="search-container">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" class="search-input" id="equipmentSearch" placeholder="搜索设备名称、型号或编号...">
+                    </div>
+
+                    <!-- 设备列表 -->
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>设备编号</th>
+                                    <th>设备名称</th>
+                                    <th>设备型号</th>
+                                    <th>购买日期</th>
+                                    <th>存放位置</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="equipmentList">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        加载中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预约管理 -->
+            <div id="reservation" class="page-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon success">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            设备预约
+                        </h2>
+                        <button class="btn btn-primary" onclick="showAddReservationModal()">
+                            <i class="fas fa-plus"></i>
+                            新建预约
+                        </button>
+                    </div>
+
+                    <!-- 预约列表 -->
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>设备名称</th>
+                                    <th>预约人</th>
+                                    <th>预约时间</th>
+                                    <th>使用目的</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservationList">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        加载中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 故障维护 -->
+            <div id="maintenance" class="page-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon warning">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            故障维护
+                        </h2>
+                        <button class="btn btn-primary" onclick="showAddMaintenanceModal()">
+                            <i class="fas fa-plus"></i>
+                            报告故障
+                        </button>
+                    </div>
+
+                    <!-- 维护列表 -->
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>设备名称</th>
+                                    <th>故障描述</th>
+                                    <th>报告人</th>
+                                    <th>报告时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="maintenanceList">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        加载中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据统计 -->
+            <div id="statistics" class="page-section hidden">
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <div class="card-icon primary">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                设备状态分布
+                            </h3>
+                        </div>
+                        <canvas id="statusChart" width="400" height="300"></canvas>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <div class="card-icon info">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                设备使用率
+                            </h3>
+                        </div>
+                        <canvas id="usageChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+
+                <!-- 导出功能 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <div class="card-icon success">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            数据导出
+                        </h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <button class="btn btn-success" onclick="exportData('equipment')">
+                            <i class="fas fa-laptop"></i>
+                            导出设备数据
+                        </button>
+                        <button class="btn btn-info" onclick="exportData('reservation')">
+                            <i class="fas fa-calendar-alt"></i>
+                            导出预约数据
+                        </button>
+                        <button class="btn btn-warning" onclick="exportData('maintenance')">
+                            <i class="fas fa-tools"></i>
+                            导出维护数据
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportData('usage')">
+                            <i class="fas fa-chart-bar"></i>
+                            导出统计报告
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户管理 -->
+            <div id="userManagement" class="page-section hidden">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <div class="card-icon primary">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            用户管理
+                        </h2>
+                    </div>
+
+                    <!-- 用户列表 -->
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>真实姓名</th>
+                                    <th>邮箱</th>
+                                    <th>角色</th>
+                                    <th>状态</th>
+                                    <th>最后登录</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="userList">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        加载中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">标题</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                内容
+            </div>
+            <div class="modal-footer" id="modalFooter">
+                <button class="btn btn-secondary" onclick="closeModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框容器 -->
+    <div id="modalContainer"></div>
+
+    <!-- 通知容器 -->
+    <div id="notificationContainer"></div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
